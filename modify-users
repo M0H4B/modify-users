@@ -1,0 +1,56 @@
+#!/bin/bash
+check=`id -u`
+if(($check != 0))
+	then
+	sleep 1
+	echo "Are you Root !!"
+	sleep 1
+	echo $"please try sudo ./processcontrol.sh  or su -c \"./processcontrol.sh\""
+else
+read -p $'(1) Create user\n(2) Delete user\n(3) show log file\n(4) take log file backup\nselect your choise:' selct
+if (($selct == 1))
+	then
+	group=root
+	uid=1000
+	gid=1000
+	disdate=60
+	ex=40
+	shell='/bin/bash'
+	read -p $"Enter username [required] :" username
+	read -p $"Enter groupname [root]default value :" group
+	read -p $"Enter uid number [1000]default value :" uid
+	read -p $"Enter gid number [1000]default value :" gid
+	read -p $"Enter the date on which the user account is disabled [60]default value :" disdate
+	read -p $"Enter The number of days after a password has expired before the account will be disabled [40]default value :" ex
+	read -p "Enter the name of user login shell [/bin/bash]default value :" shell
+	useradd  -d /home/$username -m -g $group -u $uid -s $shell -f $disdate -e $ex $username
+	sleep 1
+	passwd $username
+	sleep 1
+	mkdir -v /home/$username/Documents /home/$username/.local /home/$username/.cashe /home/$username/Desktop /home/$username/Downloads 
+	sleep 1
+	chown -Rv $username /home/$username/
+	echo "Done :)"
+ 
+elif (($selct == 2))
+	then
+	read -p $"Enter username [required] :" username
+	deluser $username
+	read -p $"Do you want also delete all files [yes/no] :" ask
+	if (($ask == 'yes'))
+		then 
+		rm -rfv /home/$username
+	else
+		echo "okey , let me know if you changed your mind"
+	fi
+elif (($selct ==3))
+	then
+	echo "you select 3"	
+elif (($selct ==4))
+	then	
+	echo "you select 4"
+ else
+  	echo "try again later .|."
+
+fi
+fi
